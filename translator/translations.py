@@ -51,7 +51,17 @@ item_translations = {
     "🗑 Очистить корзину": "🗑 Savatni tozalash",
     "✔️ Товар добавлен в корзину:": "✔️ Mahsulot savatga qo‘shildi:",
     "Ваша корзина пуста.\n\nВыберите одно из следующих:": "Savatingiz bo‘sh.\n\nQuyidagilardan birini tanlang:",
-    "В настоящее время у нас нет необходимого вам количества товара, и мы удалили все товары из вашей корзины.": "Hozirda bizda yetarli miqdorda mahsulot mavjud emas, shuning uchun savatingiz bo‘shatildi."
+    "В настоящее время у нас нет необходимого вам количества товара, и мы удалили все товары из вашей корзины.": "Hozirda bizda yetarli miqdorda mahsulot mavjud emas, shuning uchun savatingiz bo‘shatildi.",
+    "✅ Готово": "✅ Tayyor",
+    "Не удалось получить адрес!": "Manzilni olib bo'lmadi!",
+    "📍 Отправьте место, куда нужно доставить товар!": "📍 Yetkazib beriladigan manzilni yuboring!",
+    "Ошибка при обновлении местоположения!": "Joylashuvni yangilashda xatolik!",
+    "Ошибка при сохранении местоположения!": "Joylashuvni saqlashda xatolik!",
+    "Заказ отменено!\n\nВыберите одно из следующих:": "Buyurtma bekor qilindi!\n\nQuyidagilardan birini tanlang:",
+    "Вы не отправили отзыв.": "Siz sharh yubormadingiz.",
+    "Ваша корзина пуста. Нельзя подтвердить заказ.": "Savatingiz bo'sh. Buyurtmani tasdiqlash mumkin emas.",
+    "Неверный промокод, попробуйте еще раз.": "Noto'g'ri promokod, qaytadan urinib ko'ring.",
+    "Товар добавлен в корзину": "Mahsulot savatga qo'shildi",
 }
 }
 
@@ -59,9 +69,8 @@ def translate(text, lang='ru'):
     if lang == 'ru':
         return text
     elif lang == 'uz':
-        global item_translations
         try:
             return item_translations[lang][text]
-        except:
+        except KeyError:
             return text
         
