@@ -1,24 +1,20 @@
-from database.models import Item, Order, PromoCode, session_maker
+from database.models import Item, Order, PromoCode, session_maker, gmt_plus_5_now
 from sqlalchemy import insert, select, update, delete, desc
-from datetime import datetime, timedelta
-
-current_time = datetime.utcnow()
-gmt_plus_5_time = current_time + timedelta(hours=5)
 
 
 async def admin_add_item(data: dict):
     async with session_maker() as session:
         obj = Item(
-        ItemName=data["name"],
-        ItemNameUz=data["name_uz"],
-        ItemDescriptionUz=data["description_uz"],
-        ItemDescription=data["description"],
-        ItemPrice=float(data["price"]),
-        ItemQuantity=int(data["quantity"]),
-        ItemImg=str(data["image"]),
-    )
-    session.add(obj)
-    await session.commit()
+            ItemName=data["name"],
+            ItemNameUz=data["name_uz"],
+            ItemDescriptionUz=data["description_uz"],
+            ItemDescription=data["description"],
+            ItemPrice=float(data["price"]),
+            ItemQuantity=int(data["quantity"]),
+            ItemImg=str(data["image"]),
+        )
+        session.add(obj)
+        await session.commit()
 
 
 async def delete_all_orders():
@@ -70,7 +66,7 @@ async def update_order_status_by_ids(order_ids):
             .where(Order.orderId.in_(existing_order_ids))
             .values(
                 orderStatus=False,
-                updated=gmt_plus_5_time
+                updated=gmt_plus_5_now()
             )
         )
         await session.execute(update_query)
@@ -103,7 +99,7 @@ async def OrderDeleted(order_ids):
             .where(Order.orderId.in_(existing_order_ids))
             .values(
                 isOrderDeleted=True,
-                updated=gmt_plus_5_time
+                updated=gmt_plus_5_now()
             )
         )
         await session.execute(update_query)

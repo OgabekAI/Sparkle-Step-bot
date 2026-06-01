@@ -74,18 +74,6 @@ async def delete_cart_items(lang, user_id):
 
 
 
-async def finish_or_not(lang: str) -> InlineKeyboardMarkup:
-
-    finish_button = InlineKeyboardButton(text=translate("Да всё верно ✅", lang), callback_data="finish")
-    cancel_button = InlineKeyboardButton(text=translate("⬅️ Назад", lang), callback_data="back")
-    
-    keyboard = InlineKeyboardMarkup(inline_keyboard=[
-        [finish_button],
-        [cancel_button]
-    ])
-    
-    return keyboard
-
 async def isLocationTrue(lang: str) -> InlineKeyboardMarkup:
 
     yes_button = InlineKeyboardButton(text=translate("✅ Да", lang), callback_data="yes")

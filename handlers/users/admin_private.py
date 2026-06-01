@@ -111,13 +111,13 @@ async def process_order_ids(message: types.Message, state: FSMContext):
 
 
 @routerAD.message(Command('delete_all_orders'), is_admin)
-async def cancelAddItem(message: Message):
+async def delete_all_orders_handler(message: Message):
     await da.delete_all_orders()
     await message.answer("Все ордеры удален")
 
 
 
-routerAD.message(Command('cancel_order'), is_admin)
+@routerAD.message(Command('cancel_order'), is_admin)
 async def start_cancel_command(message: types.Message, state: FSMContext):
 
     await message.answer("Пожалуйста, укажите ID заказов, которые хотите отменить, через пробел.")
@@ -156,7 +156,7 @@ async def process_cancel_order_ids(message: types.Message, state: FSMContext):
     
     await state.clear()
 
-@routerAD.message(Command("active_orders_id"))
+@routerAD.message(Command("active_orders_id"), is_admin)
 async def send_active_orders(message: Message):
     active_orders = await da.get_all_active_orders()
     
@@ -372,6 +372,7 @@ async def price_item(message: Message, state: FSMContext):
             float(message.text)
         except ValueError:
             await message.answer("Введите корректное значение цены")
+            return
 
         await state.update_data(price=message.text)
     await message.answer("Введите количество товара:")
@@ -387,6 +388,7 @@ async def quantity_item(message: Message, state: FSMContext):
             int(message.text)
         except ValueError:
             await message.answer("Введите корректное значение количество")
+            return
 
         await state.update_data(quantity=message.text)
     await message.answer("Отправьте изображение товара:")
