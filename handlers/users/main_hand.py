@@ -10,7 +10,6 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ReplyKeyboardRemove
 import aiohttp
-import ssl
 from decimal import Decimal
 from datetime import datetime, timedelta
 from settings import API_KEY_MAPS, ADMIN_CHAT_ID, CHAT_ID
@@ -21,12 +20,8 @@ router = Router()
 
 async def get_address_from_lat_lng(latitude: float, longitude: float):
     url = f"https://geocode-maps.yandex.ru/1.x/?format=json&geocode={longitude},{latitude}&lang=ru&apikey={API_KEY_MAPS}"
-    ssl_context = ssl.create_default_context()
-    ssl_context.check_hostname = False
-    ssl_context.verify_mode = ssl.CERT_NONE
-
     async with aiohttp.ClientSession() as session:
-        async with session.get(url, ssl=ssl_context) as response:
+        async with session.get(url) as response:
             if response.status == 200:
                 data = await response.json()
                 try:
@@ -87,9 +82,10 @@ async def setLang(callback: CallbackQuery):
             welcome_message = f"Salom <b>{callback.from_user.first_name}</b>, men Sparkle Stepp mahsulotlariga buyurtma berish bo'yicha sizning shaxsiy yordamchingizman.\n\nQuyidagilardan birini tanlang:"
 
         await db.add_user(tgID, lang)
-
         await callback.message.answer(welcome_message, reply_markup=kb.mainMenu(lang=lang))
-
+    else:
+        await db.update_lang(tgID, lang)
+        await callback.message.answer(translate("Выберите одно из следующих:", lang), reply_markup=kb.mainMenu(lang=lang))
 
 
 @router.callback_query(F.data == "promo")
@@ -320,7 +316,7 @@ async def noconfirm_order(callback: CallbackQuery, state: FSMContext):
 
     await db.delete_from_cart(user_id)
     await db.update_user_promo(user_id, new_promo=None)
-    await callback.message.answer("Заказ отменено!\nВыберите одно из следующих:", reply_markup=await kb.Items(lang=lang))
+    await callback.message.answer(translate("Заказ отменено!\n\nВыберите одно из следующих:", lang), reply_markup=await kb.Items(lang=lang))
     await callback.answer()
 
 @router.callback_query(F.data == "review")
@@ -462,7 +458,7 @@ async def orderBtn(message: Message, state: FSMContext):
         active_orders = await db.get_user_active_orders(id_user)
 
         if not active_orders:
-            await message.answer(translate("У вас нет активных заказов!", lang))
+            await message.answer(translate("У вас нету активные  заказы!", lang))
             return
 
         orders_by_date = {}
@@ -671,10 +667,8 @@ async def basket_action(callback_query: CallbackQuery, state: FSMContext):
     await callback_query.message.chat.delete_message(last_answer_message_id)
 
     
-    await callback_query.answer(translate("Товар добавлен в корзину", lang))
     keyboard = await kb.Items(lang=lang)
     await callback_query.message.answer(translate('✔️ Товар добавлен в корзину:', lang), reply_markup=keyboard)
-    await callback_query.message.answer(translate('Выберите одно из следующих:', lang), reply_markup=keyboard)
     await callback_query.answer()
 
 

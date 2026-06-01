@@ -9,18 +9,19 @@ engine = create_async_engine(url=DB_LITE, echo=True, connect_args={"timeout": 10
 session_maker = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
 
 
-current_time = datetime.utcnow()
-gmt_plus_5_time = current_time + timedelta(hours=5)
+def gmt_plus_5_now():
+    return datetime.utcnow() + timedelta(hours=5)
+
 
 class Base(AsyncAttrs, DeclarativeBase):
-    created = Column(DateTime, default=gmt_plus_5_time)
-    updated = Column(DateTime, default=gmt_plus_5_time)
+    created = Column(DateTime, default=gmt_plus_5_now)
+    updated = Column(DateTime, default=gmt_plus_5_now, onupdate=gmt_plus_5_now)
 
 class User(Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
-    tgID = Column(Integer, nullable=False, unique=True)
+    tgID = Column(BigInteger, nullable=False, unique=True)
     lang = Column(String(10))
     userName = Column(String(50), default=None)
     userNumber = Column(String(20))

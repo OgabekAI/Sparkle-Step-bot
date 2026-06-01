@@ -1,9 +1,5 @@
-from database.models import User, Item, Cart, Order, PromoCode, session_maker
+from database.models import User, Item, Cart, Order, PromoCode, session_maker, gmt_plus_5_now
 from sqlalchemy import insert, select, update, delete, func
-from datetime import datetime, timedelta
-
-current_time = datetime.utcnow()
-gmt_plus_5_time = current_time + timedelta(hours=5)
 
 
 async def user_exists(tgID):
@@ -84,7 +80,7 @@ async def save_location(tgID, lang, latitude, longitude):
                 lang=lang,
                 latitude=latitude,
                 longitude=longitude,
-                updated=gmt_plus_5_time
+                updated=gmt_plus_5_now()
             )
         )
         await session.execute(query)
@@ -97,7 +93,7 @@ async def save_number(tgID, userNumber):
             .where(User.tgID == tgID)
             .values(
                 userNumber=userNumber,
-                updated=gmt_plus_5_time
+                updated=gmt_plus_5_now()
             )
         )
         await session.execute(query)
@@ -219,7 +215,7 @@ async def update_item_quantity(item_id: int, new_quantity: int):
             .where(Item.Id == item_id)
             .values(
                 ItemQuantity=new_quantity,
-                updated=gmt_plus_5_time
+                updated=gmt_plus_5_now()
             )
         )
         await session.execute(query)
@@ -246,7 +242,7 @@ async def update_payment_method(tgID: int, new_method: str):
             .where(User.tgID == tgID)
             .values(
                 userPaymentMethod=new_method,
-                updated=gmt_plus_5_time
+                updated=gmt_plus_5_now()
             )
         )
         await session.execute(query)
@@ -265,7 +261,7 @@ async def update_user_promo(tgID: int, new_promo: str):
             .where(User.tgID == tgID)
             .values(
                 userPromoCode=new_promo,
-                updated=gmt_plus_5_time
+                updated=gmt_plus_5_now()
             )
         )
         await session.execute(query)
@@ -295,7 +291,7 @@ async def update_promo_activations(promo_id: int, new_activations: int):
             .where(PromoCode.id == promo_id)
             .values(
                 activations=new_activations,
-                updated=gmt_plus_5_time
+                updated=gmt_plus_5_now()
             )
         )
         await session.execute(query)
